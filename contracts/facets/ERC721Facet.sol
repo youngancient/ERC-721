@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import { IERC721 } from "../interfaces/IERC721.sol";
 import { LibDiamond } from "../libraries/LibDiamond.sol";
 import {IERC721Errors} from "../interfaces/Errors.sol";
-import {Strings} from "../libraries/Strings.sol";
+import {Strings} from "../libraries/utils/Strings.sol";
 
 contract ERC721Facet is  IERC721{
    
@@ -121,6 +121,11 @@ contract ERC721Facet is  IERC721{
         }
     }
 
+
+    function mint(address to, uint256 tokenId) external {
+        LibDiamond.enforceIsContractOwner();
+        _mint(to, tokenId);
+    }
    
     /**
      * @dev Returns the owner of the `tokenId`. Does NOT revert if token doesn't exist

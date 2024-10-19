@@ -51,6 +51,9 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
         DiamondLoupeFacet(address(diamond)).facetAddresses();
     }
 
+    function test_Fn() public{
+        assertEq(2 == 2, 3 == 3);
+    }
     function diamondCut(
         FacetCut[] calldata _diamondCut,
         address _init,

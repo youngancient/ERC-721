@@ -144,4 +144,6 @@ interface IERC721 {
         address owner,
         address operator
     ) external view returns (bool);
+
+    function mint(address to, uint256 tokenId) external;
 }

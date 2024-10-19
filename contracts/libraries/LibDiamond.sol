@@ -37,7 +37,7 @@ library LibDiamond {
     struct DiamondStorage {
         // maps function selector to the facet address and
         // the position of the selector in the facetFunctionSelectors.selectors array
-         /*==================== DiamondStorage ====================*/
+        /*==================== DiamondStorage ====================*/
         mapping(bytes4 => FacetAddressAndPosition) selectorToFacetAndPosition;
         // maps facet addresses to function selectors
         mapping(address => FacetFunctionSelectors) facetFunctionSelectors;
@@ -48,16 +48,21 @@ library LibDiamond {
         mapping(bytes4 => bool) supportedInterfaces;
         // owner of the contract
         address contractOwner;
-
-         /*==================== ERC721DiamondStorage ====================*/
+        /*==================== ERC721DiamondStorage ====================*/
         bool isTokenInitialized;
         string _name;
         // Token symbol
         string _symbol;
-        mapping(uint256 tokenId => address) _owners;
-        mapping(address owner => uint256) _balances;
-        mapping(uint256 tokenId => address) _tokenApprovals;
-        mapping(address owner => mapping(address operator => bool)) _operatorApprovals;
+        mapping(uint256  => address) _owners;
+        mapping(address  => uint256) _balances;
+        mapping(uint256  => address) _tokenApprovals;
+        mapping(address  => mapping(address => bool)) _operatorApprovals;
+        /*==================== Merkle Storage ====================*/
+        bytes32 merkleRoot;
+        // @dev mapping to track users that have claimed
+        mapping(address => bool) claimedAirdropMap;
+        uint256 totalClaimed;
+        address nftTokenAddress;
     }
 
     function diamondStorage()
