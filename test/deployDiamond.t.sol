@@ -54,7 +54,7 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
 
         cut[2] = (
             FacetCut({
-                facetAddress: address(ownerF),
+                facetAddress: address(erc721F),
                 action: FacetCutAction.Add,
                 functionSelectors: generateSelectors("ERC721Facet")
             })
@@ -62,7 +62,7 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
 
         cut[3] = (
             FacetCut({
-                facetAddress: address(ownerF),
+                facetAddress: address(merkleF),
                 action: FacetCutAction.Add,
                 functionSelectors: generateSelectors("MerkleAirdropFacet")
             })
@@ -85,16 +85,57 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
         assertEq(ERC721Facet(address(diamond)).ownerOf(1), to);
         assertEq(ERC721Facet(address(diamond)).balanceOf(to), 1);
 
+        vm.stopPrank();
+        vm.startPrank(to);
         // Test transferring an NFT
-        // ERC721Facet(address(diamond)).transferFrom(address(this), address(0x1), 1);
-        // assertEq(ERC721Facet(address(diamond)).ownerOf(1), address(0x1));
-        // assertEq(ERC721Facet(address(diamond)).balanceOf(address(this)), 0);
-        // assertEq(ERC721Facet(address(diamond)).balanceOf(address(0x1)), 1);
+        ERC721Facet(address(diamond)).approve(address(this), 1);
+
+        ERC721Facet(address(diamond)).transferFrom(to, address(0x1), 1);
+
+        assertEq(ERC721Facet(address(diamond)).ownerOf(1), address(0x1));
+        assertEq(ERC721Facet(address(diamond)).balanceOf(to), 0);
+        assertEq(ERC721Facet(address(diamond)).balanceOf(address(0x1)), 1);
     }
 
-    function test_Fn() public{
-        assertEq(2 == 2, 3 == 3);
-    }
+    // function test_Merkle() public{
+    //     // Initialize Merkle Airdrop Facet
+    // bytes32 merkleRoot = 0xabc; // Replace with an actual Merkle root
+    // MerkleAirdropFacet(address(diamond)).initialize(address(erc721F), merkleRoot);
+
+    // vm.stopPrank();
+    
+    // // Step 1: Valid Claim Test
+    // vm.startPrank(address(0x246));  // Set user address
+    // bytes32; // Merkle proof for this user, replace with valid proof
+    // validProof[0] = 0x123; // Replace with actual proof part
+    // validProof[1] = 0x1234; // Replace with actual proof part
+
+    // // Claim an airdrop for token ID 1
+    // MerkleAirdropFacet(address(diamond)).claimAirdrop(1, validProof);
+
+    // // Check if the NFT was minted to the user
+    // assertEq(ERC721Facet(address(diamond)).ownerOf(1), address(0x246));
+    // assertEq(ERC721Facet(address(diamond)).balanceOf(address(0x246)), 1);
+
+    // // Step 2: Double Claim Test
+    // // Try claiming again, it should revert
+    // vm.expectRevert(MerkleAirdropErrors.HasClaimedRewardsAlready.selector);
+    // MerkleAirdropFacet(address(diamond)).claimAirdrop(1, validProof);
+
+    // vm.stopPrank();
+
+    // // Step 3: Invalid Proof Test
+    // vm.startPrank(address(0x789));  // New user
+    // bytes32; // Invalid proof
+    // invalidProof[0] = 0x123823923;  // Invalid proof part
+    // invalidProof[1] = 0x456238238;  // Invalid proof part
+
+    // // Try claiming with invalid proof, it should revert
+    // vm.expectRevert(MerkleAirdropErrors.InvalidClaim.selector);
+    // MerkleAirdropFacet(address(diamond)).claimAirdrop(2, invalidProof);
+
+    // vm.stopPrank();
+    // }
     function diamondCut(
         FacetCut[] calldata _diamondCut,
         address _init,
